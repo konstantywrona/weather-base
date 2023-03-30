@@ -5,9 +5,11 @@ import { useCallback, useState } from 'react';
 
 const WeatherBox = (props) => {
   const [weather, setWeather] = useState('');
+  const [pending, setPending] = useState(false);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleCityChange = useCallback((city) => {
+    setPending(true);
     console.log(city);
 
     fetch(
@@ -21,6 +23,7 @@ const WeatherBox = (props) => {
           icon: data.weather[0].icon,
           description: data.weather[0].main,
         };
+        setPending(false);
         setWeather(weatherData);
         console.log(weatherData);
       });
@@ -29,8 +32,8 @@ const WeatherBox = (props) => {
   return (
     <section>
       <PickCity action={handleCityChange} />
-      {<WeatherSummary {...weather} />}
-      <Loader />
+      {weather && !pending && <WeatherSummary {...weather} />}
+      {pending && <Loader />}
     </section>
   );
 };
